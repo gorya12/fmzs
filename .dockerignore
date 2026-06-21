@@ -1,0 +1,14 @@
+.git
+node_modules
+**/node_modules
+**/dist
+**/*.log
+**/*.err
+.env
+.env.*
+!/.env.example
+frontend/admin/server/database/*.db
+frontend/admin/server/data/*.sqlite*
+frontend/admin/server/uploads
+backend/database/*.db
+__pycache__

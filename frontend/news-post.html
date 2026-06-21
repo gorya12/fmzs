@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Новость | Формоза-Сервис</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .post-hero {
+            background: linear-gradient(135deg, #1a1f24 0%, #212529 100%);
+            padding: 100px 0 50px;
+            position: relative;
+        }
+        .post-hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to top, #F8F9FA, transparent);
+        }
+        .post-breadcrumbs {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .post-breadcrumbs a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+        }
+        .post-breadcrumbs a:hover { color: #78AF69; }
+        .post-breadcrumbs .sep { color: rgba(255,255,255,0.3); }
+        .post-breadcrumbs .current {
+            color: rgba(255,255,255,0.9);
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .post-section {
+            padding: 0 0 60px;
+            background: #F8F9FA;
+        }
+        .news-post {
+            max-width: 860px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 2;
+            margin-top: -30px;
+        }
+        .news-post-image {
+            width: 100%;
+            height: 420px;
+            overflow: hidden;
+            background: #E9ECEF;
+        }
+        .news-post-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .news-post-body {
+            padding: 32px 40px 40px;
+        }
+        .news-post-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .news-post-category {
+            display: inline-block;
+            padding: 5px 14px;
+            background: rgba(55,120,80,0.08);
+            color: #377850;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 20px;
+        }
+        .news-post-date {
+            font-size: 14px;
+            color: #ADB5BD;
+        }
+        .news-post-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #212529;
+            line-height: 1.25;
+            margin-bottom: 16px;
+        }
+        .news-post-excerpt {
+            font-size: 17px;
+            color: #6C757D;
+            line-height: 1.7;
+            padding: 16px 0;
+            border-top: 1px solid #E9ECEF;
+            border-bottom: 1px solid #E9ECEF;
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+        .news-post-content {
+            font-size: 16px;
+            line-height: 1.85;
+            color: #343A40;
+        }
+        .news-post-content p { margin-bottom: 18px; }
+        .news-post-footer {
+            display: flex;
+            gap: 12px;
+            padding-top: 24px;
+            margin-top: 24px;
+            border-top: 1px solid #E9ECEF;
+        }
+        .news-post-footer .btn {
+            padding: 12px 24px;
+            font-size: 14px;
+        }
+
+        /* Рекомендации */
+        .related-section {
+            padding: 60px 0 80px;
+            background: #F8F9FA;
+        }
+        .related-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .related-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+        .related-header p {
+            font-size: 15px;
+            color: #6C757D;
+        }
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .related-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .post-hero { padding: 70px 0 35px; }
+            .news-post-image { height: 220px; }
+            .news-post-body { padding: 20px 20px 28px; }
+            .news-post-title { font-size: 22px; }
+            .news-post-footer { flex-direction: column; }
+            .news-post-footer .btn { width: 100%; text-align: center; }
+            .post-breadcrumbs .current { max-width: 200px; }
+            .related-grid { grid-template-columns: 1fr; gap: 16px; }
+            .related-header h2 { font-size: 22px; }
+            .related-section { padding: 40px 0 60px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header header-desktop">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo"><img src="assets/images/logo.png" alt="Формоза-Сервис"></div>
+                <div class="header-contacts">
+                    <div class="contact-item"><img src="assets/icons/telephone.png" alt="" class="contact-icon phone-icon"><a href="tel:+78112222888" class="contact-phone">+7 (811) 222-28-88</a></div>
+                    <div class="contact-item"><img src="assets/icons/telephone.png" alt="" class="contact-icon phone-icon"><a href="tel:+78112222895" class="contact-phone">+7 (811) 222-28-95</a></div>
+                    <div class="contact-item"><img src="assets/icons/letter.png" alt="" class="contact-icon email-icon"><a href="mailto:service@formoza.pskov.ru" class="contact-email">service@formoza.pskov.ru</a></div>
+                </div>
+                <div class="header-search"><input type="text" placeholder="Искать на сайте..."><button type="submit" aria-label="Поиск"><img src="assets/icons/search.png" alt="" class="search-icon"></button></div>
+                <nav class="main-nav">
+                    <div class="container">
+                        <ul class="nav-list">
+                            <li class="nav-item"><a href="directions.html" class="nav-link">Направления</a></li>
+                            <li class="nav-item"><a href="about.html" class="nav-link">О компании</a></li>
+                            <li class="nav-item"><a href="licenses.html" class="nav-link">Лицензии и компетенции</a></li>
+                            <li class="nav-item"><a href="consultation.html" class="nav-link consultation-link">Консультация</a></li>
+                            <li class="nav-item"><a href="contacts.html" class="nav-link">Контакты</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <header class="header header-mobile">
+        <div class="mobile-header-container">
+            <div class="logo"><img src="assets/images/logo.png" alt="Формоза-Сервис"></div>
+            <div class="mobile-header-actions">
+                <a href="tel:+78112222888" class="mobile-phone-btn" aria-label="Позвонить"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></a>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Меню"><span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span></button>
+            </div>
+        </div>
+        <nav class="mobile-nav" id="mobile-nav">
+            <div class="mobile-nav-content">
+                <ul class="mobile-nav-list">
+                    <li class="mobile-nav-item"><a href="index.html" class="mobile-nav-link">Главная</a></li>
+                    <li class="mobile-nav-item"><a href="directions.html" class="mobile-nav-link">Направления</a></li>
+                    <li class="mobile-nav-item"><a href="about.html" class="mobile-nav-link">О компании</a></li>
+                    <li class="mobile-nav-item"><a href="licenses.html" class="mobile-nav-link">Лицензии</a></li>
+                    <li class="mobile-nav-item"><a href="contacts.html" class="mobile-nav-link">Контакты</a></li>
+                    <li class="mobile-nav-item"><a href="consultation.html" class="mobile-nav-link">Консультация</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <section class="post-hero">
+        <div class="container">
+            <div class="post-breadcrumbs">
+                <a href="index.html">Главная</a>
+                <span class="sep">/</span>
+                <a href="news-archive.html">Новости</a>
+                <span class="sep">/</span>
+                <span class="current" id="breadcrumb-title">Загрузка...</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="post-section">
+        <div class="container">
+            <div id="post-container">
+                <div style="max-width:860px;margin:0 auto;background:#fff;border-radius:20px;padding:40px;box-shadow:0 8px 32px rgba(0,0,0,0.08);text-align:center;color:#6C757D;">Загрузка новости...</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="related-section">
+        <div class="container">
+            <div class="related-header">
+                <h2>Рекомендуем почитать</h2>
+                <p>Другие новости и события компании</p>
+            </div>
+            <div class="news-grid related-grid" id="related-news-container"></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <div class="footer-logo"><img src="assets/images/logo.png" alt="Формоза-Сервис"></div>
+                    <p class="footer-about">Профессиональное сервисное обслуживание, поставка оборудования и комплексные решения для промышленных объектов.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+                        <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+                        <a href="#" aria-label="VK"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.12-5.339-3.202C4.624 10.857 4 8.65 4 8.174c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.678.847 2.456 2.274 4.607 2.862 4.607.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.744-.576.744z"/></svg></a>
+                    </div>
+                </div>
+                <div class="footer-nav">
+                    <h4>Навигация</h4>
+                    <ul>
+                        <li><a href="directions.html">Направления</a></li>
+                        <li><a href="about.html">О компании</a></li>
+                        <li><a href="licenses.html">Лицензии</a></li>
+                        <li><a href="contacts.html">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-services">
+                    <h4>Услуги</h4>
+                    <ul>
+                        <li><a href="directions.html">Сервисное обслуживание</a></li>
+                        <li><a href="directions.html">Поставка оборудования</a></li>
+                        <li><a href="directions.html">Монтаж и наладка</a></li>
+                        <li><a href="consultation.html">Консультация</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contacts">
+                    <h4>Контакты</h4>
+                    <ul>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><a href="tel:+78112222888">+7 (811) 222-28-88</a></li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><a href="mailto:service@formoza.pskov.ru">service@formoza.pskov.ru</a></li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>Псков, ул. Промышленная, 15</span></li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Пн–Пт: 8:00 – 18:00</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Формоза-Сервис. Все права защищены.</p>
+                <div class="footer-legal">
+                    <a href="admin/login.html">Вход для администраторов</a>
+                    <a href="#">Политика конфиденциальности</a>
+                    <a href="#">Пользовательское соглашение</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="phone-modal" id="phone-modal">
+        <div class="phone-modal-overlay"></div>
+        <div class="phone-modal-content">
+            <div class="phone-modal-header">
+                <h3>Выберите номер для звонка</h3>
+                <button class="phone-modal-close" id="phone-modal-close" aria-label="Закрыть"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+            </div>
+            <div class="phone-modal-body">
+                <a href="tel:+78112222888" class="phone-option"><div class="phone-option-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></div><div class="phone-option-info"><span class="phone-option-label">Основной</span><span class="phone-option-number">+7 (811) 222-28-88</span></div></a>
+                <a href="tel:+78112222895" class="phone-option"><div class="phone-option-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></div><div class="phone-option-info"><span class="phone-option-label">Дополнительный</span><span class="phone-option-number">+7 (811) 222-28-95</span></div></a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/slider.js"></script>
+    <script src="js/blocks.js"></script>
+    <script src="js/news.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNewsPost();
+        });
+    </script>
+</body>
+</html>

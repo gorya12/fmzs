@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки | Панель управления</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar" id="sidebar"></aside>
+        <div class="main">
+            <header class="topbar">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <h1 class="topbar-title">Настройки профиля</h1>
+                <div class="topbar-actions"></div>
+            </header>
+            <main class="content">
+                <div class="card" style="max-width:600px;">
+                    <div class="card-header">
+                        <h2 class="card-title">Личные данные</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Логин</label>
+                            <input type="text" id="s-username" disabled style="background:var(--gray-100);color:var(--gray-500);">
+                        </div>
+                        <div class="form-group">
+                            <label>ФИО</label>
+                            <input type="text" id="s-fullname" placeholder="Ваше полное имя">
+                        </div>
+                        <div class="form-group">
+                            <label>Новый пароль (оставьте пустым, чтобы не менять)</label>
+                            <input type="password" id="s-password" placeholder="Минимум 6 символов">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveProfile()">Сохранить изменения</button>
+                    </div>
+                </div>
+
+                <div class="card" style="max-width:600px;margin-top:24px;">
+                    <div class="card-header">
+                        <h2 class="card-title">Информация</h2>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size:14px;color:var(--gray-600);line-height:1.7;">
+                            <strong>Роль:</strong> <span id="s-role"></span><br>
+                            <strong>Аккаунт создан:</strong> <span id="s-created"></span><br>
+                            <strong>Последний вход:</strong> <span id="s-lastlogin"></span>
+                        </p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        if (!checkAuth()) throw new Error('Unauthorized');
+        renderSidebar('settings');
+
+        async function loadProfile() {
+            try {
+                const user = await apiClient.get('/api/profile');
+                document.getElementById('s-username').value = user.username;
+                document.getElementById('s-fullname').value = user.full_name;
+                document.getElementById('s-role').textContent = formatRole(user.role);
+                document.getElementById('s-created').textContent = formatDate(user.created_at);
+                document.getElementById('s-lastlogin').textContent = user.last_login ? formatDate(user.last_login) : 'Никогда';
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        async function saveProfile() {
+            const data = {
+                full_name: document.getElementById('s-fullname').value.trim(),
+                password: document.getElementById('s-password').value
+            };
+
+            if (!data.full_name) {
+                showToast('Укажите ФИО', 'error');
+                return;
+            }
+
+            try {
+                await apiClient.patch('/api/profile', data);
+                showToast('Профиль обновлён');
+                document.getElementById('s-password').value = '';
+                loadProfile();
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>

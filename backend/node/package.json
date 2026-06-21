@@ -1,0 +1,20 @@
+{
+  "name": "formosa-main-backend",
+  "version": "1.0.0",
+  "description": "Node.js backend service for the main Formosa API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "migrate": "npx knex migrate:latest --knexfile knexfile.js",
+    "rollback": "npx knex migrate:rollback --knexfile knexfile.js",
+    "seed": "npx knex seed:run --knexfile knexfile.js",
+    "setup": "npm run migrate && npm run seed",
+    "make:migration": "node ./scripts/create-migration.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.22.1",
+    "knex": "^2.5.1",
+    "pg": "^8.11.1"
+  }
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "username": "Aleksandra",
+    "password_hash": "$2a$10$7P4mUrhju6oRy/zRiorCx./I.dUVJd6AlWxnsAfZistbXNtbtt.yu",
+    "full_name": "Александра (Суперадмин)",
+    "role": "superadmin",
+    "created_at": "2026-05-08T11:28:19.141Z",
+    "last_login": "2026-05-08T15:37:31.210Z"
+  },
+  {
+    "id": 2,
+    "username": "Uvarov.A.V",
+    "password_hash": "$2a$10$QmKSWTsw.aQga6ZwCelGguX3oNgmUU1G0tT7Uw.ub1Sj0HBw9J6UO",
+    "full_name": "Уваров А.В. (Суперадмин)",
+    "role": "superadmin",
+    "created_at": "2026-05-08T11:28:19.225Z",
+    "last_login": null
+  },
+  {
+    "id": 3,
+    "username": "Testuser",
+    "password_hash": "$2a$10$Z9OIfl8ZqexW3qNkUH5SjORT2KK36tfUKc9uPm.3JQWCJrzLmfy4.",
+    "full_name": "Тестовый Пользователь",
+    "role": "support",
+    "created_at": "2026-05-08T12:26:20.797Z",
+    "last_login": null
+  }
+]

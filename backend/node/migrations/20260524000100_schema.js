@@ -1,0 +1,84 @@
+exports.up = async function(knex) {
+  await knex.schema.createTable('users', table => {
+    table.increments('id').primary();
+    table.string('username').notNullable().unique();
+    table.string('password_hash').notNullable();
+    table.string('full_name').notNullable();
+    table.string('role').notNullable().defaultTo('user');
+    table.timestamp('created_at').notNullable();
+    table.timestamp('last_login').nullable();
+  });
+
+  await knex.schema.createTable('news', table => {
+    table.increments('id').primary();
+    table.string('title').notNullable();
+    table.text('content').nullable();
+    table.date('date').nullable();
+    table.string('image_url').nullable();
+    table.integer('created_by').unsigned().references('id').inTable('users').onDelete('SET NULL');
+    table.timestamp('created_at').notNullable();
+    table.timestamp('updated_at').nullable();
+    table.boolean('is_active').notNullable().defaultTo(true);
+  });
+  await knex.schema.raw('CREATE INDEX IF NOT EXISTS idx_news_created_by ON news(created_by)');
+  await knex.schema.raw('CREATE INDEX IF NOT EXISTS idx_news_is_active ON news(is_active)');
+
+  await knex.schema.createTable('projects', table => {
+    table.increments('id').primary();
+    table.string('title').notNullable();
+    table.text('description').nullable();
+    table.string('image_url').nullable();
+    table.integer('created_by').unsigned().references('id').inTable('users').onDelete('SET NULL');
+    table.timestamp('created_at').notNullable();
+    table.timestamp('updated_at').nullable();
+  });
+  await knex.schema.raw('CREATE INDEX IF NOT EXISTS idx_projects_title ON projects(title)');
+
+  await knex.schema.createTable('special_offers', table => {
+    table.increments('id').primary();
+    table.string('title').notNullable();
+    table.text('description').nullable();
+    table.integer('created_by').unsigned().references('id').inTable('users').onDelete('SET NULL');
+    table.timestamp('created_at').notNullable();
+    table.timestamp('updated_at').nullable();
+  });
+  await knex.schema.raw('CREATE INDEX IF NOT EXISTS idx_offers_created_by ON special_offers(created_by)');
+
+  await knex.schema.createTable('applications', table => {
+    table.increments('id').primary();
+    table.string('type').notNullable();
+    table.string('name').notNullable();
+    table.string('phone').notNullable();
+    table.string('email').nullable().defaultTo('');
+    table.string('company').nullable().defaultTo('');
+    table.string('service').nullable().defaultTo('');
+    table.text('message').nullable();
+    table.string('status').notNullable().defaultTo('new');
+    table.text('response').nullable();
+    table.integer('updated_by').unsigned().references('id').inTable('users').onDelete('SET NULL');
+    table.timestamp('created_at').notNullable();
+    table.timestamp('updated_at').nullable();
+  });
+  await knex.schema.raw('CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status)');
+  await knex.schema.raw('CREATE INDEX IF NOT EXISTS idx_applications_updated_by ON applications(updated_by)');
+
+  await knex.schema.createTable('activity_log', table => {
+    table.increments('id').primary();
+    table.integer('user_id').unsigned().references('id').inTable('users').onDelete('SET NULL');
+    table.string('action').notNullable();
+    table.string('entity_type').notNullable();
+    table.integer('entity_id').nullable();
+    table.text('details').nullable();
+    table.timestamp('created_at').notNullable();
+  });
+  await knex.schema.raw('CREATE INDEX IF NOT EXISTS idx_activity_log_user_id ON activity_log(user_id)');
+};
+
+exports.down = async function(knex) {
+  await knex.schema.dropTableIfExists('activity_log');
+  await knex.schema.dropTableIfExists('applications');
+  await knex.schema.dropTableIfExists('special_offers');
+  await knex.schema.dropTableIfExists('projects');
+  await knex.schema.dropTableIfExists('news');
+  await knex.schema.dropTableIfExists('users');
+};

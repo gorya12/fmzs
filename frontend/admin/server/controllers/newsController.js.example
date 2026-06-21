@@ -1,0 +1,216 @@
+/**
+ * newsController.js
+ * Контроллер для управления новостями
+ * 
+ * Паттерн: Создание → Валидация (Request класс) → Очистка → БД → Ответ
+ */
+
+const express = require('express');
+const db = require('../database');
+const asyncHandler = require('./asyncHandler');
+const CreateNewsRequest = require('../requests/CreateNewsRequest');
+// const UpdateNewsRequest = require('../requests/UpdateNewsRequest');  // TODO: создать
+
+const router = express.Router();
+
+/**
+ * Проверка прав доступа
+ */
+const canEditNews = (role) => ['superadmin', 'manager'].includes(role);
+const canDeleteNews = (role) => role === 'superadmin';
+
+/**
+ * GET /api/news
+ * Получить все новости
+ * Доступ: публичный
+ */
+router.get('/', asyncHandler(async (req, res) => {
+    const news = await db.getNews();
+    
+    res.json({
+        success: true,
+        data: news,
+        count: news.length
+    });
+}));
+
+/**
+ * GET /api/news/:id
+ * Получить новость по ID
+ * Доступ: публичный
+ */
+router.get('/:id', asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    
+    if (!id || isNaN(id)) {
+        return res.status(400).json({ error: 'Некорректный ID' });
+    }
+
+    const news = await db.getNewsById(id);
+
+    if (!news) {
+        return res.status(404).json({ error: 'Новость не найдена' });
+    }
+
+    res.json({ success: true, data: news });
+}));
+
+/**
+ * POST /api/news
+ * Создать новую новость
+ * Доступ: manager, superadmin
+ * 
+ * @body {
+ *   title: string (5-200 символов),
+ *   category: string (news|updates|events|other),
+ *   excerpt: string (10-300 символов),
+ *   content: string (20-10000 символов),
+ *   image_url: string (опционально, до 255 символов)
+ * }
+ */
+router.post('/', asyncHandler(async (req, res) => {
+    // 1. ПРОВЕРКА ПРАВ
+    if (!canEditNews(req.user.role)) {
+        return res.status(403).json({ 
+            error: 'Доступ запрещён. Требуются права manager или выше' 
+        });
+    }
+
+    // 2. ВАЛИДАЦИЯ
+    const createRequest = new CreateNewsRequest(req.body);
+    
+    if (!createRequest.validate()) {
+        return res.status(422).json({
+            error: 'Ошибка валидации',
+            errors: createRequest.getErrors(),
+            message: createRequest.getFirstError()
+        });
+    }
+
+    // 3. ОЧИСТКА ДАННЫХ
+    const cleanData = createRequest.sanitized();
+
+    // 4. СОХРАНЕНИЕ
+    const newsId = await db.createNews({
+        ...cleanData,
+        created_by: req.user.id
+    });
+
+    // 5. ЛОГИРОВАНИЕ
+    await db.logActivity(
+        req.user.id,
+        'CREATE',
+        'news',
+        newsId,
+        `Создана новость: ${cleanData.title}`
+    );
+
+    // 6. ОТВЕТ
+    res.status(201).json({
+        success: true,
+        message: 'Новость успешно создана',
+        data: {
+            id: newsId,
+            ...cleanData,
+            created_by: req.user.id,
+            created_at: new Date().toISOString()
+        }
+    });
+}));
+
+/**
+ * PATCH /api/news/:id
+ * Обновить новость
+ * Доступ: manager, superadmin
+ */
+router.patch('/:id', asyncHandler(async (req, res) => {
+    // 1. ПРОВЕРКА ПРАВ
+    if (!canEditNews(req.user.role)) {
+        return res.status(403).json({ 
+            error: 'Доступ запрещён' 
+        });
+    }
+
+    const { id } = req.params;
+
+    // 2. ПРОВЕРКА СУЩЕСТВОВАНИЯ
+    const news = await db.getNewsById(id);
+
+    if (!news) {
+        return res.status(404).json({ error: 'Новость не найдена' });
+    }
+
+    // TODO: 3. ВАЛИДАЦИЯ (когда создадим UpdateNewsRequest)
+    // const updateRequest = new UpdateNewsRequest(req.body, id);
+    // if (!updateRequest.validate()) {
+    //     return res.status(422).json({...});
+    // }
+    // const cleanData = updateRequest.sanitized();
+
+    // 4. ОБНОВЛЕНИЕ (временно - без валидации)
+    await db.updateNews(id, {
+        ...req.body,
+        updated_by: req.user.id,
+        updated_at: new Date()
+    });
+
+    // 5. ЛОГИРОВАНИЕ
+    await db.logActivity(
+        req.user.id,
+        'UPDATE',
+        'news',
+        id,
+        `Обновлена новость: ${news.title}`
+    );
+
+    // 6. ОТВЕТ
+    res.json({
+        success: true,
+        message: 'Новость успешно обновлена',
+        data: { id, ...req.body }
+    });
+}));
+
+/**
+ * DELETE /api/news/:id
+ * Удалить новость
+ * Доступ: superadmin только
+ */
+router.delete('/:id', asyncHandler(async (req, res) => {
+    // 1. ПРОВЕРКА ПРАВ
+    if (!canDeleteNews(req.user.role)) {
+        return res.status(403).json({ 
+            error: 'Доступ запрещён. Только суперадмин может удалять' 
+        });
+    }
+
+    const { id } = req.params;
+
+    // 2. ПРОВЕРКА СУЩЕСТВОВАНИЯ
+    const news = await db.getNewsById(id);
+
+    if (!news) {
+        return res.status(404).json({ error: 'Новость не найдена' });
+    }
+
+    // 3. УДАЛЕНИЕ
+    await db.deleteNews(id);
+
+    // 4. ЛОГИРОВАНИЕ
+    await db.logActivity(
+        req.user.id,
+        'DELETE',
+        'news',
+        id,
+        `Удалена новость: ${news.title}`
+    );
+
+    // 5. ОТВЕТ
+    res.json({
+        success: true,
+        message: 'Новость успешно удалена',
+        data: { id, deleted_at: new Date().toISOString() }
+    });
+}));
+
+module.exports = router;

@@ -1,0 +1,18 @@
+.app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.page {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}

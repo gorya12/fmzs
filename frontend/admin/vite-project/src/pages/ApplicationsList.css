@@ -1,0 +1,25 @@
+.applications-list .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.applications-list h1 {
+  color: #1a1a2e;
+}
+
+.status-badge.new {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge.processed {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-badge.closed {
+  background: #f3f4f6;
+  color: #4b5563;
+}

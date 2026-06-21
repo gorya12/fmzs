@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дашборд | Панель управления</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar" id="sidebar"></aside>
+        <div class="main">
+            <header class="topbar">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <h1 class="topbar-title">Дашборд</h1>
+                <div class="topbar-actions">
+                    <span style="font-size:13px;color:var(--gray-600);">Всего заявок: <strong id="total-apps">0</strong></span>
+                </div>
+            </header>
+            <main class="content">
+                <div class="stats-grid" id="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-apps">0</div>
+                            <div class="stat-label">Всего заявок</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-new">0</div>
+                            <div class="stat-label">Новых заявок</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-news">0</div>
+                            <div class="stat-label">Новостей</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-offers">0</div>
+                            <div class="stat-label">Акций</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Последние заявки</h2>
+                        <a href="applications.html" class="btn btn-sm btn-secondary">Все заявки</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table class="data-table" id="recent-apps">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Телефон</th>
+                                        <th>Статус</th>
+                                        <th>Дата</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="empty-state" id="apps-empty" style="display:none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <p>Пока нет заявок</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        if (!checkAuth()) throw new Error('Unauthorized');
+        renderSidebar('index');
+
+        async function loadStats() {
+            try {
+                const stats = await apiClient.get('/api/stats');
+                document.getElementById('stat-apps').textContent = stats.total_applications;
+                document.getElementById('stat-new').textContent = stats.new_applications;
+                document.getElementById('stat-news').textContent = stats.total_news;
+                document.getElementById('stat-offers').textContent = stats.total_offers;
+                document.getElementById('total-apps').textContent = stats.total_applications;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadRecentApps() {
+            if (!isSupport()) {
+                document.getElementById('recent-apps').closest('.card').style.display = 'none';
+                return;
+            }
+            try {
+                const apps = await apiClient.get('/api/applications');
+                const tbody = document.querySelector('#recent-apps tbody');
+                const recent = apps.slice(0, 8);
+
+                if (recent.length === 0) {
+                    document.getElementById('apps-empty').style.display = 'block';
+                    document.getElementById('recent-apps').style.display = 'none';
+                    return;
+                }
+
+                tbody.innerHTML = recent.map(a => {
+                    const s = formatStatus(a.status);
+                    return `<tr>
+                        <td>#${a.id}</td>
+                        <td><strong>${a.name}</strong></td>
+                        <td>${a.type === 'consultation' ? 'Консультация' : 'Контакт'}</td>
+                        <td>${a.phone}</td>
+                        <td><span class="badge ${s.class}">${s.text}</span></td>
+                        <td>${formatDate(a.created_at)}</td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        loadStats();
+        loadRecentApps();
+    </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+/* ===== DIRECTIONS PAGE ===== */
+
+/* Page Hero */
+.page-hero {
+    background: #212529;
+    color: #fff;
+    padding: 48px 0 56px;
+    position: relative;
+}
+
+.page-hero-content {
+    max-width: 700px;
+}
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 20px;
+}
+
+.breadcrumbs a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.breadcrumbs a:hover {
+    color: #F17210;
+}
+
+.page-hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    line-height: 1.15;
+}
+
+.page-hero p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.6;
+    max-width: 560px;
+}
+
+/* Directions Section */
+.directions-section {
+    padding: 64px 0;
+    background: #F8F9FA;
+}
+
+.directions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+/* Direction Card */
+.direction-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 32px 28px;
+    border: 1px solid #E9ECEF;
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.direction-card:hover {
+    border-color: #78AF69;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+    transform: translateY(-3px);
+}
+
+.direction-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: rgba(120, 175, 105, 0.1);
+    color: #78AF69;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: all 0.25s ease;
+}
+
+.direction-card:hover .direction-icon {
+    background: #78AF69;
+    color: #fff;
+}
+
+.direction-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.direction-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.direction-card > p {
+    font-size: 14px;
+    color: #6C757D;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    flex: 1;
+}
+
+.direction-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+}
+
+.direction-features li {
+    font-size: 13px;
+    color: #495057;
+    padding: 5px 0 5px 18px;
+    position: relative;
+    line-height: 1.5;
+}
+
+.direction-features li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #F17210;
+}
+
+.direction-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #78AF69;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.2s ease;
+    margin-top: auto;
+}
+
+.direction-link::after {
+    content: '→';
+    transition: transform 0.2s ease;
+}
+
+.direction-link:hover {
+    color: #F17210;
+}
+
+.direction-link:hover::after {
+    transform: translateX(4px);
+}
+
+/* Page CTA */
+.page-cta {
+    padding: 56px 0;
+    background: #fff;
+    border-top: 1px solid #E9ECEF;
+}
+
+.page-cta-content {
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.page-cta h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 10px;
+}
+
+.page-cta p {
+    font-size: 15px;
+    color: #6C757D;
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+/* Active nav link */
+.nav-link.active {
+    background: #2a6b3f;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* ===== ADAPTIVE ===== */
+@media (max-width: 1024px) {
+    .directions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-hero {
+        padding: 32px 0 40px;
+    }
+
+    .page-hero h1 {
+        font-size: 26px;
+    }
+
+    .page-hero p {
+        font-size: 14px;
+    }
+
+    .directions-section {
+        padding: 40px 0;
+    }
+
+    .directions-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .direction-card {
+        padding: 24px 20px;
+    }
+
+    .page-cta h2 {
+        font-size: 22px;
+    }
+}

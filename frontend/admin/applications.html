@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявки | Панель управления</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar" id="sidebar"></aside>
+        <div class="main">
+            <header class="topbar">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <h1 class="topbar-title">Заявки</h1>
+                <div class="topbar-actions"></div>
+            </header>
+            <main class="content">
+                <div class="tabs">
+                    <button class="tab active" data-status="all" onclick="filterApps('all')">Все</button>
+                    <button class="tab" data-status="new" onclick="filterApps('new')">Новые</button>
+                    <button class="tab" data-status="in_progress" onclick="filterApps('in_progress')">В работе</button>
+                    <button class="tab" data-status="completed" onclick="filterApps('completed')">Выполнены</button>
+                    <button class="tab" data-status="closed" onclick="filterApps('closed')">Закрыты</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <table class="data-table" id="apps-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Дата</th>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Телефон</th>
+                                        <th>Услуга</th>
+                                        <th>Статус</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="empty-state" id="apps-empty" style="display:none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <p>Заявок не найдено</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Response Modal -->
+    <div class="modal-overlay" id="response-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Ответ на заявку #<span id="resp-app-id"></span></h3>
+                <button class="modal-close" onclick="closeModal('response-modal')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Статус</label>
+                    <select id="resp-status">
+                        <option value="new">Новая</option>
+                        <option value="in_progress">В работе</option>
+                        <option value="completed">Выполнена</option>
+                        <option value="closed">Закрыта</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ответ / Комментарий</label>
+                    <textarea id="resp-text" rows="4" placeholder="Введите ответ клиенту..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('response-modal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveResponse()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        if (!checkAuth()) throw new Error('Unauthorized');
+        if (!isSupport()) { window.location.href = 'index.html'; }
+        renderSidebar('applications');
+
+        let currentFilter = 'all';
+        let currentAppId = null;
+
+        async function loadApps() {
+            try {
+                const url = currentFilter === 'all' ? '/api/applications' : `/api/applications?status=${currentFilter}`;
+                const apps = await apiClient.get(url);
+                const tbody = document.querySelector('#apps-table tbody');
+
+                if (apps.length === 0) {
+                    document.getElementById('apps-empty').style.display = 'block';
+                    document.getElementById('apps-table').style.display = 'none';
+                    return;
+                }
+
+                document.getElementById('apps-empty').style.display = 'none';
+                document.getElementById('apps-table').style.display = 'table';
+
+                tbody.innerHTML = apps.map(a => {
+                    const s = formatStatus(a.status);
+                    return `<tr>
+                        <td>#${a.id}</td>
+                        <td>${formatDate(a.created_at)}</td>
+                        <td><strong>${a.name}</strong></td>
+                        <td>${a.type === 'consultation' ? 'Консультация' : 'Контакт'}</td>
+                        <td><a href="tel:${a.phone}">${a.phone}</a></td>
+                        <td>${a.service || '-'}</td>
+                        <td><span class="badge ${s.class}">${s.text}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-secondary" onclick="openResponse(${a.id}, '${a.status}', '${(a.response || '').replace(/'/g, "\\'")}')">Ответить</button>
+                            ${isSuperadmin() ? `<button class="btn btn-sm btn-danger" onclick="deleteApp(${a.id})">Удалить</button>` : ''}
+                        </td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        function filterApps(status) {
+            currentFilter = status;
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.status === status);
+            });
+            loadApps();
+        }
+
+        function openResponse(id, status, response) {
+            currentAppId = id;
+            document.getElementById('resp-app-id').textContent = id;
+            document.getElementById('resp-status').value = status;
+            document.getElementById('resp-text').value = response || '';
+            openModal('response-modal');
+        }
+
+        async function saveResponse() {
+            try {
+                await apiClient.patch(`/api/applications/${currentAppId}`, {
+                    status: document.getElementById('resp-status').value,
+                    response: document.getElementById('resp-text').value
+                });
+                closeModal('response-modal');
+                showToast('Ответ сохранён');
+                loadApps();
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        async function deleteApp(id) {
+            if (!confirm('Удалить заявку #' + id + '?')) return;
+            try {
+                await apiClient.delete(`/api/applications/${id}`);
+                showToast('Заявка удалена');
+                loadApps();
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        loadApps();
+    </script>
+</body>
+</html>
