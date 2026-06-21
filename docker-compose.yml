@@ -14,18 +14,22 @@ services:
       - formosa_uploads:/app/frontend/admin/server/uploads
     restart: unless-stopped
 
-  nginx:
-    image: nginx:1.27-alpine
+  caddy:
+    image: caddy:2.8-alpine
     depends_on:
       - api
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./frontend:/usr/share/nginx/html:ro
-      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - formosa_uploads:/usr/share/nginx/html/uploads:ro
+      - ./frontend:/usr/share/caddy:ro
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
     restart: unless-stopped
 
 volumes:
   formosa_data:
   formosa_uploads:
+  caddy_data:
+  caddy_config:

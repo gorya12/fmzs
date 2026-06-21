@@ -12,6 +12,30 @@ var API_BASE = window.FORMOSA_API_BASE || '';
 
 console.log('[PromotionController] script loaded, API_BASE =', API_BASE);
 
+const fallbackOffers = [
+    {
+        title: 'Диагностика оборудования',
+        description: 'Проверим состояние узлов, подготовим рекомендации и план обслуживания.',
+        price_old: 'от 35 000 ₽',
+        price_new: 'от 25 000 ₽',
+        features: ['Выезд', 'Отчет', 'Рекомендации']
+    },
+    {
+        title: 'Сервисное обслуживание',
+        description: 'Плановое обслуживание промышленного оборудования с контролем сроков.',
+        price_old: '',
+        price_new: 'по договору',
+        features: ['Регламент', 'Контроль', 'Поддержка']
+    },
+    {
+        title: 'Поставка комплектующих',
+        description: 'Подберем и поставим совместимые комплектующие для вашего объекта.',
+        price_old: '',
+        price_new: 'от 7 дней',
+        features: ['Подбор', 'Поставка', 'Гарантия']
+    }
+];
+
 class PromotionController {
     /**
      * Загрузить все активные акции
@@ -39,8 +63,8 @@ class PromotionController {
             console.log('[PromotionController] offers loaded:', offers.length, offers);
 
             if (offers.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#6C757D;padding:40px;">Акций пока нет</p>';
-                return [];
+                container.innerHTML = fallbackOffers.map((offer, index) => this.renderOfferCard(offer, index)).join('');
+                return fallbackOffers;
             }
 
             // Если передана кастомная функция рендеринга — используем её
@@ -57,9 +81,9 @@ class PromotionController {
             // Fallback на заглушку
             const container = document.getElementById(containerId);
             if (container) {
-                container.innerHTML = '<p style="text-align:center;color:#6C757D;padding:40px;">Ошибка загрузки акций</p>';
+                container.innerHTML = fallbackOffers.map((offer, index) => this.renderOfferCard(offer, index)).join('');
             }
-            return [];
+            return fallbackOffers;
         }
     }
 

@@ -1,0 +1,24 @@
+fmzserv.ru, www.fmzserv.ru {
+    encode zstd gzip
+
+    @www host www.fmzserv.ru
+    redir @www https://fmzserv.ru{uri} permanent
+
+    @index path /index.html
+    redir @index / permanent
+
+    @html path_regexp html ^/(.+)\.html$
+    redir @html /{re.html.1} permanent
+
+    handle /api/* {
+        reverse_proxy api:3001
+    }
+
+    handle /uploads/* {
+        reverse_proxy api:3001
+    }
+
+    root * /usr/share/caddy
+    try_files {path} {path}.html {path}/ =404
+    file_server
+}

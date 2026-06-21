@@ -16,7 +16,7 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Сайт будет доступен на `http://SERVER_IP/`, админка - на `http://SERVER_IP/admin/login.html`, API - на `/api`.
+Сайт будет доступен на `https://fmzserv.ru/`, админка - на `https://fmzserv.ru/admin/login`, API - на `/api`.
 
 При первом старте контейнер применяет миграции и заполняет базу начальными данными, если таблица пользователей пустая. После первого входа смените стандартные пароли в админке.
 

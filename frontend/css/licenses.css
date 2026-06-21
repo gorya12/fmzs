@@ -1,7 +1,7 @@
 /* ===== LICENSES PAGE ===== */
 
 .page-hero {
-    background: #212529;
+    background: linear-gradient(135deg, #377850 0%, #327457 100%);
     color: #fff;
     padding: 48px 0 56px;
 }

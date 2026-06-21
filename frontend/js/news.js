@@ -17,7 +17,7 @@ async function loadNewsFromAPI(limit = 6) {
         const news = await res.json();
 
         if (news.length === 0) {
-            container.innerHTML = '<p style="text-align:center;color:#6C757D;padding:40px;">Новостей пока нет</p>';
+            loadNews();
             return;
         }
         
@@ -316,12 +316,29 @@ function loadNews() {
 // Загружаем новости при загрузке страницы
 function initAll() {
     console.log('=== initAll called ===');
+    markCurrentNavigation();
     loadNewsFromAPI(6);
     // Акции загружаются через promotionController.js автоматически
     initOffersSection();
     initMobileMenu();
     initPhoneModal();
     initContactForm();
+}
+
+function normalizePagePath(value) {
+    const path = value.split('?')[0].split('#')[0].replace(/\/$/, '');
+    const file = path.substring(path.lastIndexOf('/') + 1) || 'index';
+    return file.replace(/\.html$/, '') || 'index';
+}
+
+function markCurrentNavigation() {
+    const current = normalizePagePath(window.location.pathname);
+    document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('tel:') || href.startsWith('mailto:')) return;
+        const target = normalizePagePath(href);
+        link.classList.toggle('active', target === current);
+    });
 }
     
 document.addEventListener('DOMContentLoaded', initAll);

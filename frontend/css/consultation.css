@@ -1,7 +1,7 @@
 /* ===== CONSULTATION PAGE ===== */
 
 .page-hero {
-    background: #212529;
+    background: linear-gradient(135deg, #377850 0%, #327457 100%);
     color: #fff;
     padding: 48px 0 56px;
 }
@@ -82,6 +82,10 @@
     gap: 18px;
 }
 
+.consultation-form-compact {
+    max-width: 520px;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
@@ -158,6 +162,24 @@
 .form-note a {
     color: #78AF69;
     text-decoration: underline;
+}
+
+.personal-data-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #495057;
+    cursor: pointer;
+}
+
+.personal-data-consent input {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    accent-color: #78AF69;
+    flex-shrink: 0;
 }
 
 /* Consultation Info */
