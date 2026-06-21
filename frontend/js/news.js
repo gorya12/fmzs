@@ -62,33 +62,34 @@ function createNewsCardFromAPI(newsItem) {
 
 // ===== АРХИВ НОВОСТЕЙ =====
 async function loadNewsArchive() {
-    try {
-        const container = document.getElementById('archive-news-container');
-        if (!container) return;
+    const container = document.getElementById('archive-news-container');
+    if (!container) return;
 
+    try {
         const res = await fetch(`${API_BASE}/api/public/news`);
         if (!res.ok) throw new Error('Не удалось загрузить новости');
         const news = await res.json();
 
         if (news.length === 0) {
-            container.innerHTML = '<p style="text-align:center;color:#6C757D;padding:60px 20px;">Новостей пока нет</p>';
+            renderArchiveFallback(container);
             return;
         }
 
         container.innerHTML = news.map(n => createArchiveNewsCard(n)).join('');
     } catch (e) {
         console.error('Ошибка загрузки архива:', e);
-        container.innerHTML = '<p style="text-align:center;color:#6C757D;padding:60px 20px;">Ошибка загрузки новостей</p>';
+        renderArchiveFallback(container);
     }
 }
 
 function createArchiveNewsCard(newsItem) {
-    const image = newsItem.image_url || 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27250%27 viewBox=%270 0 400 250%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27400%27 height=%27250%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2718%27 text-anchor=%27middle%27 x=%27200%27 y=%27125%27%3EФото%3C/text%3E%3C/svg%3E';
-    const date = formatDateRu(newsItem.created_at);
+    const image = newsItem.image_url || newsItem.image || 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27250%27 viewBox=%270 0 400 250%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27400%27 height=%27250%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2718%27 text-anchor=%27middle%27 x=%27200%27 y=%27125%27%3EФото%3C/text%3E%3C/svg%3E';
+    const date = newsItem.created_at ? formatDateRu(newsItem.created_at) : newsItem.date;
+    const postUrl = newsItem.created_at ? `news-post.html?id=${newsItem.id}` : `index.html#news`;
     return `
         <article class="archive-news-card">
             <div class="archive-news-image">
-                <img src="${image}" alt="${newsItem.title}" onerror="this.style.display='none'">
+                <img src="${image}" alt="${newsItem.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27250%27 viewBox=%270 0 400 250%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27400%27 height=%27250%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2718%27 text-anchor=%27middle%27 x=%27200%27 y=%27125%27%3EФото%3C/text%3E%3C/svg%3E'">
             </div>
             <div class="archive-news-content">
                 <span class="archive-news-category">${newsItem.category}</span>
@@ -96,11 +97,15 @@ function createArchiveNewsCard(newsItem) {
                 <p class="archive-news-excerpt">${newsItem.excerpt}</p>
                 <div class="archive-news-footer">
                     <span class="archive-news-date">${date}</span>
-                    <a href="news-post.html?id=${newsItem.id}" class="btn btn-sm btn-secondary">Читать полностью</a>
+                    <a href="${postUrl}" class="btn btn-sm btn-secondary">Читать полностью</a>
                 </div>
             </div>
         </article>
     `;
+}
+
+function renderArchiveFallback(container) {
+    container.innerHTML = newsData.map(newsItem => createArchiveNewsCard(newsItem)).join('');
 }
 
 // ===== СТРАНИЦА ОТДЕЛЬНОЙ НОВОСТИ =====
