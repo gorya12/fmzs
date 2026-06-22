@@ -1,4 +1,14 @@
         var API_BASE = window.FORMOSA_API_BASE || '';
+const NEWS_PLACEHOLDER_320 = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27320%27 height=%27200%27 viewBox=%270 0 320 200%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27320%27 height=%27200%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2716%27 text-anchor=%27middle%27 x=%27160%27 y=%27105%27%3E%D0%9D%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D1%8C%3C/text%3E%3C/svg%3E';
+const NEWS_PLACEHOLDER_400 = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27250%27 viewBox=%270 0 400 250%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27400%27 height=%27250%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2718%27 text-anchor=%27middle%27 x=%27200%27 y=%27130%27%3E%D0%9D%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D1%8C%3C/text%3E%3C/svg%3E';
+const NEWS_PLACEHOLDER_800 = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27 viewBox=%270 0 800 400%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27800%27 height=%27400%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2724%27 text-anchor=%27middle%27 x=%27400%27 y=%27210%27%3E%D0%9D%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D1%8C%3C/text%3E%3C/svg%3E';
+
+function normalizeNewsImage(value, placeholder = NEWS_PLACEHOLDER_320) {
+    if (!value) return placeholder;
+    const src = String(value).trim();
+    if (!src || /\/?assets\/images\/news\d+\.jpg$/i.test(src)) return placeholder;
+    return src;
+}
 
 // Форматирование даты
 function formatDateRu(dateStr) {
@@ -31,12 +41,12 @@ async function loadNewsFromAPI(limit = 6) {
 }
 
 function createNewsCardFromAPI(newsItem) {
-    const image = newsItem.image_url || 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27320%27 height=%27200%27 viewBox=%270 0 320 200%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27320%27 height=%27200%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2716%27 text-anchor=%27middle%27 x=%27160%27 y=%27100%27%3EФото%3C/text%3E%3C/svg%3E';
+    const image = normalizeNewsImage(newsItem.image_url, NEWS_PLACEHOLDER_320);
     const date = formatDateRu(newsItem.created_at);
     return `
         <article class="news-card">
             <div class="news-card-image">
-                <img src="${image}" alt="${newsItem.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27320%27 height=%27200%27 viewBox=%270 0 320 200%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27320%27 height=%27200%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2716%27 text-anchor=%27middle%27 x=%27160%27 y=%27100%27%3EФото%3C/text%3E%3C/svg%3E'">
+                <img src="${image}" alt="${newsItem.title}" onerror="this.onerror=null;this.src='${NEWS_PLACEHOLDER_320}'">
             </div>
             <div class="news-card-content">
                 <span class="news-card-category">${newsItem.category}</span>
@@ -83,13 +93,13 @@ async function loadNewsArchive() {
 }
 
 function createArchiveNewsCard(newsItem) {
-    const image = newsItem.image_url || newsItem.image || 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27250%27 viewBox=%270 0 400 250%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27400%27 height=%27250%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2718%27 text-anchor=%27middle%27 x=%27200%27 y=%27125%27%3EФото%3C/text%3E%3C/svg%3E';
+    const image = normalizeNewsImage(newsItem.image_url || newsItem.image, NEWS_PLACEHOLDER_400);
     const date = newsItem.created_at ? formatDateRu(newsItem.created_at) : newsItem.date;
     const postUrl = newsItem.created_at ? `news-post.html?id=${newsItem.id}` : `index.html#news`;
     return `
         <article class="archive-news-card">
             <div class="archive-news-image">
-                <img src="${image}" alt="${newsItem.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27250%27 viewBox=%270 0 400 250%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27400%27 height=%27250%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2718%27 text-anchor=%27middle%27 x=%27200%27 y=%27125%27%3EФото%3C/text%3E%3C/svg%3E'">
+                <img src="${image}" alt="${newsItem.title}" onerror="this.onerror=null;this.src='${NEWS_PLACEHOLDER_400}'">
             </div>
             <div class="archive-news-content">
                 <span class="archive-news-category">${newsItem.category}</span>
@@ -123,7 +133,7 @@ async function loadNewsPost() {
         const news = await res.json();
 
         const container = document.getElementById('post-container');
-        const image = news.image_url || 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27800%27 height=%27400%27 viewBox=%270 0 800 400%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27800%27 height=%27400%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2724%27 text-anchor=%27middle%27 x=%27400%27 y=%27200%27%3EФото%3C/text%3E%3C/svg%3E';
+        const image = normalizeNewsImage(news.image_url, NEWS_PLACEHOLDER_800);
         const date = formatDateRu(news.created_at);
 
         container.innerHTML = `
@@ -266,10 +276,11 @@ const newsData = [
 
 // Функция для создания HTML карточки новости
 function createNewsCard(newsItem) {
+    const image = normalizeNewsImage(newsItem.image, NEWS_PLACEHOLDER_320);
     return `
         <article class="news-card">
             <div class="news-card-image">
-                <img src="${newsItem.image}" alt="${newsItem.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27320%27 height=%27200%27 viewBox=%270 0 320 200%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27320%27 height=%27200%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2716%27 text-anchor=%27middle%27 x=%27160%27 y=%27100%27%3EФото%3C/text%3E%3C/svg%3E'">
+                <img src="${image}" alt="${newsItem.title}" onerror="this.onerror=null;this.src='${NEWS_PLACEHOLDER_320}'">
             </div>
             <div class="news-card-content">
                 <span class="news-card-category">${newsItem.category}</span>

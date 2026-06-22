@@ -12,6 +12,12 @@ var API_BASE = window.FORMOSA_API_BASE || '';
 
 console.log('[PromotionController] script loaded, API_BASE =', API_BASE);
 
+function isImageUrl(value) {
+    if (!value) return false;
+    const src = String(value).trim();
+    return /^(https?:)?\/\//i.test(src) || src.startsWith('/') || src.startsWith('assets/') || src.startsWith('uploads/');
+}
+
 const fallbackOffers = [
     {
         title: 'Диагностика оборудования',
@@ -170,9 +176,8 @@ class PromotionController {
         ];
         const icon = icons[index % icons.length];
 
-        // Используем иконку из БД если есть, иначе генерируем
-        const iconHTML = offer.icon 
-            ? `<img src="${offer.icon}" alt="" class="offer-card-icon-img" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="offer-card-icon-svg" style="display:none">${icon}</div>`
+        const iconHTML = isImageUrl(offer.icon)
+            ? `<div class="offer-card-icon"><img src="${offer.icon}" alt="" class="offer-card-icon-img" onerror="this.style.display='none';this.insertAdjacentHTML('afterend', '${icon.replace(/'/g, '&#39;')}')"></div>`
             : `<div class="offer-card-icon">${icon}</div>`;
 
         return `
@@ -205,7 +210,7 @@ class PromotionController {
                </div>`
             : '';
 
-        const imageHTML = offer.icon
+        const imageHTML = isImageUrl(offer.icon)
             ? `<div class="offer-detail-image"><img src="${offer.icon}" alt="${offer.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27600%27 height=%27300%27 viewBox=%270 0 600 300%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27600%27 height=%27300%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2720%27 text-anchor=%27middle%27 x=%27300%27 y=%27150%27%3EИзображение%3C/text%3E%3C/svg%3E'"></div>`
             : '<div class="offer-detail-image"><img src="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27600%27 height=%27300%27 viewBox=%270 0 600 300%27%3E%3Crect fill=%27%23F8F9FA%27 width=%27600%27 height=%27300%27/%3E%3Ctext fill=%27%236C757D%27 font-family=%27Arial%27 font-size=%2720%27 text-anchor=%27middle%27 x=%27300%27 y=%27150%27%3EИзображение%3C/text%3E%3C/svg%3E" alt="Акция"></div>';
 

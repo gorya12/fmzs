@@ -2011,6 +2011,13 @@ h3 {
     height: 28px;
 }
 
+.offer-card-icon-img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    display: block;
+}
+
 /* Стиль иконок для разных карточек */
 .offer-card-slider:nth-child(1) .offer-card-icon {
     background: rgba(241, 114, 16, 0.08);
