@@ -35,6 +35,11 @@ async function api(url, options = {}) {
     if (!res.ok) {
         throw new Error(data.message || data.error || 'Ошибка запроса');
     }
+
+    if (data && data.success === true && Object.prototype.hasOwnProperty.call(data, 'data')) {
+        return data.data;
+    }
+
     return data;
 }
 

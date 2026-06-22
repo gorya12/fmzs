@@ -123,7 +123,7 @@
                         <td>${o.price_new ? `<span style="color:#28A745;font-weight:700;">${o.price_new}</span>` : '-'} ${o.price_old ? `<span style="text-decoration:line-through;color:#ADB5BD;font-size:12px;">${o.price_old}</span>` : ''}</td>
                         <td>${formatDate(o.created_at)}</td>
                         <td>
-                            <button class="btn btn-sm btn-secondary" onclick="editOffer(${o.id}, '${o.title.replace(/'/g, "\\'")}', '${o.description.replace(/'/g, "\\'")}', '${o.price_old || ''}', '${o.price_new || ''}', '${(o.features || '').replace(/'/g, "\\'")}')">Изменить</button>
+                            <button class="btn btn-sm btn-secondary" onclick="editOffer(${o.id}, '${escapeInline(o.title)}', '${escapeInline(o.description)}', '${escapeInline(o.price_old || '')}', '${escapeInline(o.price_new || '')}', '${escapeInline(formatFeatures(o.features))}')">Изменить</button>
                             <button class="btn btn-sm btn-danger" onclick="deleteOffer(${o.id})">Удалить</button>
                         </td>
                     </tr>
@@ -131,6 +131,25 @@
             } catch (e) {
                 showToast(e.message, 'error');
             }
+        }
+
+        function escapeInline(value) {
+            return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        }
+
+        function formatFeatures(features) {
+            return Array.isArray(features) ? features.join(', ') : String(features || '');
+        }
+
+        function normalizePrice(value) {
+            const raw = String(value || '').trim();
+            if (!raw) return '';
+            const normalized = raw
+                .replace(/\s+/g, '')
+                .replace(',', '.')
+                .replace(/[^\d.]/g, '');
+
+            return normalized && !Number.isNaN(Number(normalized)) ? normalized : '';
         }
 
         function editOffer(id, title, desc, oldPrice, newPrice, features) {
@@ -151,13 +170,28 @@
             const data = {
                 title: document.getElementById('o-title').value.trim(),
                 description: document.getElementById('o-desc').value.trim(),
-                price_old: document.getElementById('o-old').value.trim(),
-                price_new: document.getElementById('o-new').value.trim(),
+                price_old: normalizePrice(document.getElementById('o-old').value),
+                price_new: normalizePrice(document.getElementById('o-new').value),
                 features
             };
 
             if (!data.title || !data.description) {
                 showToast('Заполните обязательные поля', 'error');
+                return;
+            }
+
+            if (data.title.length < 3) {
+                showToast('Заголовок должен быть минимум 3 символа', 'error');
+                return;
+            }
+
+            if (data.description.length < 10) {
+                showToast('Описание должно быть минимум 10 символов', 'error');
+                return;
+            }
+
+            if (data.price_old && data.price_new && Number(data.price_new) >= Number(data.price_old)) {
+                showToast('Новая цена должна быть меньше старой', 'error');
                 return;
             }
 
