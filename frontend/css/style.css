@@ -1719,7 +1719,8 @@ h3 {
 
 .news-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 340px));
+    justify-content: center;
     gap: 32px;
     margin-bottom: 48px;
 }

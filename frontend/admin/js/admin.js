@@ -145,6 +145,25 @@ function toggleSidebar() {
     }
 }
 
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+
+    modal.classList.remove('active');
+
+    if (!document.querySelector('.modal-overlay.active')) {
+        document.body.style.overflow = '';
+    }
+}
+
 document.addEventListener('click', (event) => {
     const sidebar = document.getElementById('sidebar');
     const toggle = document.querySelector('.sidebar-toggle');
@@ -153,6 +172,22 @@ document.addEventListener('click', (event) => {
     if (sidebar.contains(event.target) || toggle?.contains(event.target)) return;
 
     sidebar.classList.remove('open');
+});
+
+document.addEventListener('click', (event) => {
+    const overlay = event.target.closest('.modal-overlay');
+    if (overlay && event.target === overlay) {
+        closeModal(overlay.id);
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+
+    const activeModal = document.querySelector('.modal-overlay.active');
+    if (activeModal) {
+        closeModal(activeModal.id);
+    }
 });
 
 // Format date
