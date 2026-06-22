@@ -70,7 +70,12 @@
                     </div>
                     <div class="form-group">
                         <label>Категория</label>
-                        <input type="text" id="n-category" placeholder="Сервис, Ремонт..." required>
+                        <select id="n-category" required>
+                            <option value="news">Новости</option>
+                            <option value="updates">Обновления</option>
+                            <option value="events">События</option>
+                            <option value="other">Другое</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -146,16 +151,33 @@
         }
 
         async function saveNews() {
+            const excerpt = document.getElementById('n-excerpt').value.trim();
+            const content = document.getElementById('n-content').value.trim() || excerpt;
             const data = {
                 title: document.getElementById('n-title').value.trim(),
                 category: document.getElementById('n-category').value.trim(),
-                excerpt: document.getElementById('n-excerpt').value.trim(),
-                content: document.getElementById('n-content').value.trim(),
+                excerpt,
+                content,
                 image_url: document.getElementById('n-image').value.trim()
             };
 
-            if (!data.title || !data.category || !data.excerpt) {
+            if (!data.title || !data.category || !data.excerpt || !data.content) {
                 showToast('Заполните обязательные поля', 'error');
+                return;
+            }
+
+            if (data.title.length < 5) {
+                showToast('Заголовок должен быть минимум 5 символов', 'error');
+                return;
+            }
+
+            if (data.excerpt.length < 10) {
+                showToast('Краткое описание должно быть минимум 10 символов', 'error');
+                return;
+            }
+
+            if (data.content.length < 20) {
+                showToast('Полный текст должен быть минимум 20 символов', 'error');
                 return;
             }
 

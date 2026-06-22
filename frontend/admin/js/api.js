@@ -33,7 +33,7 @@ async function api(url, options = {}) {
 
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-        throw new Error(data.error || 'Ошибка запроса');
+        throw new Error(data.message || data.error || 'Ошибка запроса');
     }
     return data;
 }

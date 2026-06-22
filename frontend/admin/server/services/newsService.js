@@ -83,7 +83,7 @@ class NewsService {
      */
     async create(data, file, userId) {
         // Если есть файл, формируем URL для изображения
-        let imageUrl = '';
+        let imageUrl = data.image_url || '';
         if (file) {
             // Сохраняем относительный путь для БД
             imageUrl = `/uploads/news/${file.filename}`;
