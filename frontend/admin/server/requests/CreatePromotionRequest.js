@@ -89,7 +89,7 @@ class CreatePromotionRequest {
         }
 
         // Проверка на спецсимволы
-        if (!/^[\w\s\-\(\)\.,:а-яА-ЯёЁ]*$/.test(trimmed)) {
+        if (!/^[\w\s\-\(\)\.,:;!?%№+#"«»/а-яА-ЯёЁ]*$/.test(trimmed)) {
             this.errors.title = 'Заголовок содержит недопустимые символы';
             return;
         }
