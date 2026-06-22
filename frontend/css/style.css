@@ -1923,6 +1923,7 @@ h3 {
     margin: 0 auto;
     overflow: hidden;
     cursor: grab;
+    width: 100%;
 }
 
 .offers-slider:active {
@@ -1937,6 +1938,7 @@ h3 {
     user-select: none;
     -webkit-user-select: none;
     touch-action: pan-y;
+    align-items: stretch;
 }
 
 .offers-slider:active .offers-slider-track {
@@ -1946,6 +1948,10 @@ h3 {
 /* Карточка предложения */
 .offer-card-slider {
     flex: 0 0 300px;
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    min-height: 360px;
     background: var(--white);
     border-radius: 16px;
     padding: 30px 24px;
@@ -1953,6 +1959,11 @@ h3 {
     transition: all 0.3s ease;
     border: 1px solid #e8e8e8;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
 }
 
 .offer-card-slider:hover {
@@ -2047,6 +2058,14 @@ h3 {
     font-size: 19px;
     font-weight: 600;
     line-height: 1.3;
+    width: 100%;
+    min-height: 50px;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .offer-description {
@@ -2054,14 +2073,24 @@ h3 {
     line-height: 1.6;
     margin-bottom: 18px;
     font-size: 13px;
+    width: 100%;
+    min-height: 62px;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* Цена */
 .offer-price {
+    width: 100%;
     margin-bottom: 18px;
     padding: 14px;
     background: #f8f8f8;
     border-radius: 10px;
+    box-sizing: border-box;
 }
 
 .offer-price-old {
@@ -2076,6 +2105,7 @@ h3 {
     font-size: 20px;
     font-weight: 700;
     color: #48AB4D;
+    overflow-wrap: anywhere;
 }
 
 /* Особенности */
@@ -2085,6 +2115,9 @@ h3 {
     gap: 6px;
     margin-bottom: 18px;
     flex-wrap: wrap;
+    width: 100%;
+    max-height: 58px;
+    overflow: hidden;
 }
 
 .offer-features span {
@@ -2094,6 +2127,10 @@ h3 {
     font-size: 11px;
     font-weight: 600;
     color: #2E7D32;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Время */
@@ -2121,6 +2158,7 @@ h3 {
     font-size: 13px;
     transition: all 0.2s ease;
     border: none;
+    margin-top: auto;
 }
 
 .offer-link:hover {
@@ -3165,6 +3203,10 @@ h3 {
     
     .offer-card-slider {
         flex: 0 0 260px;
+        width: 260px;
+        min-width: 260px;
+        max-width: 260px;
+        min-height: 330px;
         padding: 20px 16px;
     }
     
@@ -3261,6 +3303,10 @@ h3 {
     
     .offer-card-slider {
         flex: 0 0 240px;
+        width: 240px;
+        min-width: 240px;
+        max-width: 240px;
+        min-height: 320px;
         padding: 18px 14px;
     }
     
